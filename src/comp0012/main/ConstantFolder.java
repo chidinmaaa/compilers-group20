@@ -31,11 +31,6 @@ public class ConstantFolder
 	public void optimize()
 	{
 		ClassGen cgen = new ClassGen(original);
-		// if (!((cgen.getClassName()).equals("comp0012.target.SimpleFolding"))) //to see only simple folding output
-	    // {
-		// 	this.optimized = gen.getJavaClass();
-		// 	return;
-		// }
 		ConstantPoolGen cpgen = cgen.getConstantPool();
 
 		Method[] methods = cgen.getMethods();
@@ -75,6 +70,7 @@ public class ConstantFolder
 			Method newMethod = methodGen.getMethod();
 			gen.replaceMethod(method, newMethod);
 		}
+
 		gen.setConstantPool(cpgen);
 		this.optimized = gen.getJavaClass();
 	}
