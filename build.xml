@@ -72,14 +72,23 @@
     </copy>
   </target>
   
-  <!-- generate the SimpleGolding classfile using Jasmin-->
+  <!-- generate the SimpleFolding classfile using Jasmin-->
   <target name="generate" depends="compile.source" description="Jasmin generation of classfiles">
     <java classname="jasmin.Main">
       <classpath refid="library.classpath"/>
       <arg line="${classes.dir}/comp0012/target/SimpleFolding.j -d ${classes.dir}"/>
     </java>
   </target>
-  
+
+  <!-- Assemble more simple folding tests with jasmin -->
+  <!-- <target name="generate2" depends="compile.source" description="Jasmin generation of classfiles">
+    <java classname="jasmin.Main">
+      <classpath refid="library.classpath"/>
+      <arg line="${classes.dir}/comp0012/target/MoreSimpleFolding.j -d ${classes.dir}"/>
+    </java>
+  </target>
+   -->
+
   <!-- build JUnit test cases -->
   <target name="compile.tests" depends="compile.source" description="compile module part2; test classes" unless="skip.tests">
     <mkdir dir="${tests.dir}"/>
