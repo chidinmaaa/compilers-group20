@@ -31,16 +31,12 @@ public class ConstantFolder
 	public void optimize()
 	{
 		ClassGen cgen = new ClassGen(original);
-		// if (!((cgen.getClassName()).equals("comp0012.target.SimpleFolding"))) //to see only simple folding output
-	    // {
-		// 	this.optimized = gen.getJavaClass();
-		// 	return;
-		// }
+	
 		ConstantPoolGen cpgen = cgen.getConstantPool();
 
 		Method[] methods = cgen.getMethods();
 
-		for(Method method : methods)
+		for(Method method : methods) //simple folding
 		{
 			MethodGen methodGen = new MethodGen(method, gen.getClassName(), cpgen);
 			InstructionList iList = methodGen.getInstructionList();
@@ -67,7 +63,27 @@ public class ConstantFolder
 					}
 				}
 			};
-			// iList.setPositions(true);
+			if (iList != null) 	//dead code removal
+			{ 
+				InstructionHandle[] handles = iList.getInstructionHandles();
+				boolean reachable = true;
+				for (InstructionHandle ih : handles) {
+					Instruction inst = ih.getInstruction();
+					if (inst instanceof ReturnInstruction || inst instanceof GOTO) {
+						reachable = false;
+					} else if (!reachable) {
+						try {
+							iList.delete(ih);
+						} catch (TargetLostException e) {
+							System.err.println("Could not delete instruction");
+						}
+					}
+					if (inst instanceof BranchInstruction) {
+						reachable = true;
+					}
+				}
+			}
+			iList.setPositions(true);
 			methodGen.setInstructionList(iList);
 			methodGen.setMaxStack();
 			methodGen.setMaxLocals();
