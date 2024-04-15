@@ -62,9 +62,6 @@ public class Main extends SimpleFileVisitor<Path> {
             ConstantFolder cf = new ConstantFolder(file.toString());
             Path rel = Paths.get(inputRoot).relativize(file);
             cf.write(Paths.get(outputRoot, rel.toString()).toAbsolutePath().toString());
-
-            DeadCodeRemover dcr = new DeadCodeRemover(file.toString());
-            dcr.write(Paths.get(outputRoot, rel.toString()).toAbsolutePath().toString());
         }
         return super.visitFile(file, attrs);
     }

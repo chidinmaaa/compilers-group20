@@ -30,6 +30,11 @@ public class ConstantFolder
 	
 	public void optimize()
 	{
+		optimize_simple_folding();
+		optimize_dead_code();
+	}
+
+	public void optimize_simple_folding() {
 		ClassGen cgen = new ClassGen(original);
 		ConstantPoolGen cpgen = cgen.getConstantPool();
 
@@ -44,20 +49,20 @@ public class ConstantFolder
 				Instruction i = handle.getInstruction();
 				if(i instanceof ArithmeticInstruction)
 				{
-					if(i instanceof IADD || i instanceof ISUB || i instanceof IDIV || i instanceof IMUL) 
-					{	
+					if(i instanceof IADD || i instanceof ISUB || i instanceof IDIV || i instanceof IMUL)
+					{
 						foldInt(handle, i, iList, cpgen);
-					}	
+					}
 					else if(i instanceof FADD || i instanceof FSUB || i instanceof FDIV || i instanceof FMUL)
-					{	
+					{
 						foldFloat(handle, i, iList, cpgen);
-					}		
+					}
 					else if(i instanceof DADD || i instanceof DSUB || i instanceof DDIV || i instanceof DMUL)
-					{	
+					{
 						foldDouble(handle, i, iList, cpgen);
 					}
 					else if(i instanceof LADD || i instanceof LSUB || i instanceof LDIV || i instanceof LMUL)
-					{	
+					{
 						foldLong(handle, i, iList, cpgen);
 					}
 				}
@@ -218,6 +223,45 @@ public class ConstantFolder
 			}	
 		}
 	}
+
+
+	public void optimize_dead_code()
+	{
+		ClassGen cgen = new ClassGen(original);
+		ConstantPoolGen cpgen = cgen.getConstantPool();
+
+		Method[] methods = cgen.getMethods();
+
+		for (Method m : methods) {
+			MethodGen mg = new MethodGen(m, gen.getClassName(), cpgen);
+			InstructionList iList = mg.getInstructionList();
+			if (iList != null) {
+				InstructionHandle[] handles = iList.getInstructionHandles();
+				boolean reachable = true;
+				for (InstructionHandle ih : handles) {
+					Instruction inst = ih.getInstruction();
+					if (inst instanceof ReturnInstruction || inst instanceof GOTO) {
+						reachable = false;
+					} else if (!reachable) {
+						try {
+							iList.delete(ih);
+						} catch (TargetLostException e) {
+							System.err.println("Could not delete instruction");
+						}
+					}
+					if (inst instanceof BranchInstruction) {
+						reachable = true;
+					}
+				}
+				mg.setInstructionList(iList);
+				mg.setMaxStack();
+				gen.replaceMethod(m, mg.getMethod());
+			}
+		}
+		gen.setConstantPool(cpgen);
+		this.optimized = gen.getJavaClass();
+	}
+
 
 	public void write(String optimisedFilePath)
 	{
