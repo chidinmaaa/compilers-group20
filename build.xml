@@ -18,7 +18,8 @@
     <pathelement location="${basedir}/lib/junit-4.12.jar"/>
     <pathelement location="${basedir}/lib/args4j-2.0.21.jar"/>
     <pathelement location="${basedir}/lib/jasmin.jar"/>
-    <pathelement location="lib/asm-9.7.jar"/>
+    <pathelement location="${basedir}/lib/asm-9.7.jar"/>
+    <pathelement location="${basedir}/lib/commons-lang3-3.14.0.jar"/>
   </path>
   
   
