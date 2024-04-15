@@ -18,6 +18,7 @@
     <pathelement location="${basedir}/lib/junit-4.12.jar"/>
     <pathelement location="${basedir}/lib/args4j-2.0.21.jar"/>
     <pathelement location="${basedir}/lib/jasmin.jar"/>
+    <pathelement location="lib/asm-9.7.jar"/>
   </path>
   
   
@@ -72,7 +73,7 @@
     </copy>
   </target>
   
-  <!-- generate the SimpleGolding classfile using Jasmin-->
+  <!-- generate the SimpleFolding classfile using Jasmin-->
   <target name="generate" depends="compile.source" description="Jasmin generation of classfiles">
     <java classname="jasmin.Main">
       <classpath refid="library.classpath"/>

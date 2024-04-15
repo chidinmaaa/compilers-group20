@@ -40,7 +40,10 @@ public class DynamicVariableFoldingTest
     public void testMethodTwoOut()
     {
         dvf.methodTwo();
-        assertEquals("true\n", outContent.toString());
+        String actualOutput = outContent.toString();
+        System.out.println("Actual output right after methodTwo: '" + actualOutput + "'");
+        String expectedOutput = System.getProperty("os.name").startsWith("Windows") ? "true\r\n" : "true\n";
+        assertEquals(expectedOutput, actualOutput);
     }
 
     @Test
